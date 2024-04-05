@@ -1,5 +1,5 @@
 {
-  "name": "redux-action-chain",
+  "name": "@mrk4/redux-action-chain",
   "version": "0.0.1",
   "description": "Redux middleware designed to assist in writing sequential logic",
   "module": "build/index.mjs",
