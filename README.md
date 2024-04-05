@@ -50,6 +50,6 @@ const [action, removeActionFromMem] = createActionChain((store, action: {type, p
 store.dipatch(action('some payload available inside of the chain action callback'));
 
 // remove action
-removeActionFromMem(); // remove this action from mem. So the middleware will no longer be albe to call this function
+removeActionFromMem(); // remove this action from mem. So the middleware will no longer be able to call this function
 
 ```
