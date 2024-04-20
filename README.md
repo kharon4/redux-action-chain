@@ -32,7 +32,6 @@ const [action, removeActionFromMem] = createActionChain((store, action: {type, p
     // take actions
     action1(payload1);
     action2(payload2);
-
 }, ?{
     name?: 'actionName', // this will later be prefixed before the action id
     selectors?: {

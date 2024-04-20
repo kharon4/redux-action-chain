@@ -30,7 +30,7 @@ export const reduxActionChain: Middleware = ((store: ReturnType<typeof configure
         }
     })
 
-    return callback(store, payloadInternal, autoSelectors, autoActions);
+    return callback(store, {type: actionChainId, payload: payloadInternal}, autoSelectors, autoActions);
 }) as any;
 
 export type ChainActionCallback<P> = (
