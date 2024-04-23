@@ -33,33 +33,41 @@ export const reduxActionChain: Middleware = ((store: ReturnType<typeof configure
     return callback(store, {type: actionChainId, payload: payloadInternal}, autoSelectors, autoActions);
 }) as any;
 
-export type ChainActionCallback<P> = (
+
+type GenericFunction = (...params: any) => any;
+
+type ActionsObject<T extends Record<string, GenericFunction>> = {
+    [K in keyof T]: T[K];
+}
+
+type SelectorsObject<T extends Record<string, GenericFunction>> = {
+    [K in keyof T]: T[K];
+}
+
+export type ChainActionCallback<P, S extends Record<string, GenericFunction>, A extends Record<string, GenericFunction>> = (
     store: ReturnType<typeof configureStore>,
     action: {type: string, payload: P},
     selectors: {
-        [selectorName: string]: Function
+        [K in keyof S]: () => ReturnType<S[K]>;
     },
     actions: {
-        [actionName: string]: Function
+        [K in keyof A]: (...args: Parameters<A[K]>) => ReturnType<typeof configureStore>["dispatch"];
     }
 ) => any
 
-export type ChainActionProps = {
+export type ChainActionProps<S extends Record<string, GenericFunction>, A extends Record<string, GenericFunction>> = {
     name?: string;
-    selectors?: {
-        [selectorName: string]: Function
-    },
-    actions?: {
-        [actionName: string]: Function
-    }
+    selectors?: SelectorsObject<S>
+    actions?: ActionsObject<A>
 }
 
-export type CreateActionChain<P> = (callback: ChainActionCallback<P>, props?: ChainActionProps) => [
-    (payload: P) => ({type: string, payload: {actionChainId: string, payloadInternal: P}}),
-    () => boolean
-]
+export type CreateActionChain<P, S extends Record<string, GenericFunction>, A extends Record<string, GenericFunction>> = 
+    (callback: ChainActionCallback<P, S, A>, props?: ChainActionProps<S, A>) => [
+        (payload: P) => ({type: string, payload: {actionChainId: string, payloadInternal: P}}),
+        () => boolean
+    ]
 
-export const createActionChain: CreateActionChain<unknown> = (callback, props = {}) => {
+export const createActionChain = <P, S extends Record<string, GenericFunction>, A extends Record<string, GenericFunction>>(callback: ChainActionCallback<P, S, A>, props: ChainActionProps<S, A> = {} ) => {
     const actionChainId = (props.name || '') + uuidv4();
     actionMap.set(actionChainId, {
         selectors: props.selectors || {},
@@ -67,7 +75,7 @@ export const createActionChain: CreateActionChain<unknown> = (callback, props = 
         callback
     });
 
-    return [(payload: any) => ({
+    return [(payload: P) => ({
         type: REDUX_ACTION_CHAIN_TYPE,
         payload: {
             actionChainId,
