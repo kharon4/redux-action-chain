@@ -1,6 +1,6 @@
 {
   "name": "@mrk4/redux-action-chain",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Redux middleware designed to assist in writing sequential logic",
   "module": "build/index.mjs",
   "main": "build/index.mjs",
@@ -18,7 +18,5 @@
     "vite": "^5.2.7",
     "vite-plugin-dts": "^3.8.1"
   },
-  "dependencies": {
-    "uuid": "^9.0.1"
-  }
+  "dependencies": {}
 }
